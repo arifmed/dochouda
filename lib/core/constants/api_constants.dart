@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'http://arifmed.duckdns.org/houda/public/api';
+  static const String baseUrl = 'https://docteurhouda.aarif.dev/api';
 
   static const String login = '/auth/login';
 
