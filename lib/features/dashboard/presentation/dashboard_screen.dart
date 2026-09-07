@@ -9,6 +9,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +60,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           M3EHorizontalFloatingToolbar(
             expanded: true,
             decoration: M3EFloatingToolbarDecoration(
-              colors: M3EFloatingToolbarDefaults.standardColors(context),
+              colors: M3EFloatingToolbarDefaults.vibrantColors(context),
+              motion: M3EMotion.expressiveSpatialFast,
             ),
             leadingContent: IconButton(
               icon: const Icon(Icons.attachment_rounded),
@@ -71,6 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   icon: const Icon(Icons.mic_rounded),
                   onPressed: () {},
                 ),
+
                 IconButton(
                   icon: const Icon(Icons.videocam_rounded),
                   onPressed: () {},

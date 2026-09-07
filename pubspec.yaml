@@ -39,7 +39,9 @@ dependencies:
   go_router: ^17.5.0
   flutter_secure_storage: ^11.0.0
   intl: ^0.20.3
+  material_ui: ^0.0.1
   m3e_floating_toolbar: ^0.0.1
+  adaptive_platform_ui: ^0.1.111
   
 
 
