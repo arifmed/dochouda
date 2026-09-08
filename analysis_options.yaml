@@ -8,10 +8,7 @@
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
 analyzer:
-<<<<<<< HEAD
-  errors:
-    unused_element_parameter: ignore
-=======
+
   exclude:
     - build/**
     - android/**
@@ -20,7 +17,6 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
->>>>>>> bc61436a745f57a6741a865e93ee73bbc61f231a
 include: package:flutter_lints/flutter.yaml
 
 linter:

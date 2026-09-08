@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:m3e_floating_toolbar/m3e_floating_toolbar.dart'; // Ensure this is imported
+import 'package:m3e_floating_toolbar/m3e_floating_toolbar.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -10,6 +10,10 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
+  bool isExpanded = true;
+  bool isVideoSelected = false;
+  bool isConsultationSelected = false;
+  bool isPatientsSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       // --- INTEGRATED FLOATING MENU ---
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
       floatingActionButton: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -60,7 +65,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           M3EHorizontalFloatingToolbar(
             expanded: true,
             decoration: M3EFloatingToolbarDecoration(
-              colors: M3EFloatingToolbarDefaults.vibrantColors(context),
+              colors: M3EFloatingToolbarDefaults.standardColors(context),
+              shape: const StadiumBorder(),
               motion: M3EMotion.expressiveSpatialFast,
             ),
             leadingContent: IconButton(
@@ -74,7 +80,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   icon: const Icon(Icons.mic_rounded),
                   onPressed: () {},
                 ),
-
                 IconButton(
                   icon: const Icon(Icons.videocam_rounded),
                   onPressed: () {},
@@ -114,6 +119,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.only(bottom: 100),
             child: Column(
               children: [
+                // Placed within a Stack or screen layout (Screen Alignment: Bottom Center):
+
                 /////////////////////patients card////////////////////////////
                 Card.filled(
                   color: const Color(0xff0a5ad0),
