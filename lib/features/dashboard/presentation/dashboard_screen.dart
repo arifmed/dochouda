@@ -27,11 +27,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "username",
+              "Praticien",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
             ),
             Text(
-              "username",
+              "Nom et prenom",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
