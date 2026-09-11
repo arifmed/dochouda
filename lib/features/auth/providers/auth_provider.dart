@@ -60,7 +60,10 @@ class AuthController extends StateNotifier<AuthState> {
         state = const AuthState(isLoading: false);
       }
     } catch (e) {
-      state = AuthState(isLoading: false, error: 'Failed to load user');
+      state = AuthState(
+        isLoading: false,
+        error: 'Erreur lors de la connexion.',
+      );
     }
   }
 
@@ -74,7 +77,10 @@ class AuthController extends StateNotifier<AuthState> {
 
       return true;
     } catch (e) {
-      state = AuthState(isLoading: false, error: 'Login failed');
+      state = AuthState(
+        isLoading: false,
+        error: "L'email ou le mot de passe est incorrect.",
+      );
 
       return false;
     }

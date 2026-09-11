@@ -41,7 +41,7 @@ dependencies:
   intl: ^0.20.3
   m3e_floating_toolbar: ^1.0.1
   material_ui: ^1.0.0
-  m3_floating_toolbar: ^0.3.0
+  
 
   
 

@@ -1,3 +1,4 @@
+import 'package:dochouda/features/auth/presentation/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:m3e_floating_toolbar/m3e_floating_toolbar.dart';
 
@@ -11,9 +12,6 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
   bool isExpanded = true;
-  bool isVideoSelected = false;
-  bool isConsultationSelected = false;
-  bool isPatientsSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -23,32 +21,81 @@ class _DashboardScreenState extends State<DashboardScreen> {
           padding: EdgeInsets.only(left: 8),
           child: CircleAvatar(radius: 24, child: Icon(Icons.person)),
         ),
-        title: const Column(
+
+        title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Docteur',
+              "username",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
             ),
             Text(
-              'Houda CHAFIQ',
+              "username",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: IconButton.filledTonal(
-              icon: const Icon(Icons.notifications),
-              onPressed: () {},
+            padding: const EdgeInsets.all(8.0),
+            child: MenuAnchor(
+              menuChildren: [
+                MenuItemButton(
+                  leadingIcon: const Icon(Icons.person),
+                  child: const Text('Profile'),
+                  onPressed: () {},
+                ),
+                MenuItemButton(
+                  leadingIcon: const Icon(Icons.person_add_alt_1),
+                  child: const Text('Ajouter un utilisateur'),
+                  onPressed: () {},
+                ),
+                MenuItemButton(
+                  leadingIcon: const Icon(Icons.people_alt_rounded),
+                  child: const Text('Utilisateurs'),
+                  onPressed: () {},
+                ),
+
+                MenuItemButton(
+                  leadingIcon: const Icon(Icons.password),
+                  child: const Text('Changer le mot de passe'),
+                  onPressed: () {},
+                ),
+                const PopupMenuDivider(),
+                MenuItemButton(
+                  leadingIcon: const Icon(Icons.logout),
+                  child: const Text('Déconnexion'),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                ),
+              ],
+              builder:
+                  (
+                    BuildContext context,
+                    MenuController controller,
+                    Widget? child,
+                  ) {
+                    return IconButton.filledTonal(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        if (controller.isOpen) {
+                          controller.close();
+                        } else {
+                          controller.open();
+                        }
+                      },
+                    );
+                  },
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: IconButton.filledTonal(
-              icon: const Icon(Icons.logout),
+              icon: const Icon(Icons.notifications),
               onPressed: () {},
             ),
           ),
@@ -57,39 +104,87 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       // --- INTEGRATED FLOATING MENU ---
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-
       floatingActionButton: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+
         children: [
           // 1. The Main Floating Toolbar
           M3EHorizontalFloatingToolbar(
             expanded: true,
             decoration: M3EFloatingToolbarDecoration(
-              colors: M3EFloatingToolbarDefaults.standardColors(context),
-              shape: const StadiumBorder(),
-              motion: M3EMotion.expressiveSpatialFast,
+              contentPadding: EdgeInsets.symmetric(horizontal: 8),
+              colors: M3EFloatingToolbarColors(
+                toolbarContainerColor: const Color(0xFFE6D6FF),
+                toolbarContentColor: const Color(0xff5E4A83),
+                fabContainerColor: const Color(0xFFE6D6FF),
+                fabContentColor: const Color(0xff5E4A83),
+              ),
             ),
-            leadingContent: IconButton(
-              icon: const Icon(Icons.attachment_rounded),
-              onPressed: () {},
-            ),
+            // leadingContent: IconButton(
+            //   icon: const Icon(Icons.attachment_rounded),
+            //   onPressed: () {},
+            // ),
             content: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.mic_rounded),
                   onPressed: () {},
+                  icon: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.bar_chart_rounded),
+                      Text('Dashbord', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+
+                IconButton(
+                  onPressed: () {},
+                  icon: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.calendar_today_rounded),
+                      Text('RDV', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.videocam_rounded),
                   onPressed: () {},
+                  icon: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.medical_services_rounded),
+                      Text('Consultations', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.people_rounded),
+                      Text('Patients', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.medication_liquid_rounded),
+                      Text('Medicaments', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
                 ),
               ],
             ),
-            trailingContent: IconButton(
-              icon: const Icon(Icons.send_rounded),
-              onPressed: () {},
-            ),
+            //trailingContent: IconButton(
+            //  icon: const Icon(Icons.send_rounded),
+            //  onPressed: () {},
+            //),
           ),
 
           const SizedBox(width: 12),
