@@ -1,4 +1,5 @@
 import 'package:dochouda/features/auth/presentation/login_screen.dart';
+import 'package:dochouda/features/dashboard/presentation/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:m3e_floating_toolbar/m3e_floating_toolbar.dart';
 
@@ -114,12 +115,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             expanded: true,
             decoration: M3EFloatingToolbarDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: 8),
-              colors: M3EFloatingToolbarColors(
-                toolbarContainerColor: const Color(0xFFE6D6FF),
-                toolbarContentColor: const Color(0xff5E4A83),
-                fabContainerColor: const Color(0xFFE6D6FF),
-                fabContentColor: const Color(0xff5E4A83),
-              ),
             ),
             // leadingContent: IconButton(
             //   icon: const Icon(Icons.attachment_rounded),
@@ -140,7 +135,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
 
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (context) => Menu()));
+                  },
                   icon: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -166,16 +165,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       Icon(Icons.people_rounded),
                       Text('Patients', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.medication_liquid_rounded),
-                      Text('Medicaments', style: TextStyle(fontSize: 12)),
                     ],
                   ),
                 ),

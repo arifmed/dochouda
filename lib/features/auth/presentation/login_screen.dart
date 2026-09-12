@@ -41,14 +41,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   Image.asset("assets/images/logo.png"),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
 
                   const Text(
                     'Cabinet Dr CHAFIQ HOUDA',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
 
                   TextFormField(
                     controller: emailController,
