@@ -25,7 +25,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
-      body: Center(
+      body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
 
@@ -41,14 +41,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   Image.asset("assets/images/logo.png"),
 
-                  const SizedBox(height: 20),
-
                   const Text(
                     'Cabinet Dr CHAFIQ HOUDA',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
 
                   TextFormField(
                     controller: emailController,
@@ -108,7 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
                   if (authState.error != null)
                     Padding(
@@ -116,14 +114,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       child: Text(
                         authState.error!,
-                        style: const TextStyle(color: Colors.red),
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
 
                   SizedBox(
                     width: double.infinity,
 
-                    height: 52,
+                    height: 54,
 
                     child: FilledButton(
                       style: FilledButton.styleFrom(
@@ -139,7 +141,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               height: 24,
                               child: CircularProgressIndicator(),
                             )
-                          : const Text('CONNECTER'),
+                          : const Text(
+                              'CONNECTER',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ],
