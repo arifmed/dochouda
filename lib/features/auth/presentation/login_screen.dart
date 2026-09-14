@@ -27,7 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
+          constraints: const BoxConstraints(maxWidth: double.infinity),
 
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -39,6 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children: [
+                  const SizedBox(height: 120),
                   Image.asset("assets/images/logo.png"),
 
                   const Text(
