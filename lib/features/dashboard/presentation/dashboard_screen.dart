@@ -15,34 +15,9 @@ class DashboardScreen extends ConsumerWidget {
     final auth = ref.watch(authControllerProvider);
     return Scaffold(
       appBar: AppBar(
-<<<<<<< HEAD
         leading: Padding(
           padding: const EdgeInsets.only(left: 8),
           child: CircleAvatar(
-=======
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 8),
-          child: CircleAvatar(radius: 24, child: Icon(Icons.person)),
-        ),
-
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Praticien",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-            ),
-            Text(
-              "Nom et prenom",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
->>>>>>> 723b33427f7adcc1dcbddd6bb1e2d5a2162cb767
             child: MenuAnchor(
               menuChildren: [
                 MenuItemButton(
