@@ -7,6 +7,8 @@ class ApiConstants {
 
   static const String me = '/auth/me';
 
+  static const String users = '/users';
+
   static const String patients = '/patients';
 
   static const String appointments = '/appointments';

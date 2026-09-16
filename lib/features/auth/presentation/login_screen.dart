@@ -21,6 +21,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool obscurePassword = true;
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    final success = await ref
+        .read(authControllerProvider.notifier)
+        .login(
+          email: emailController.text.trim(),
+          password: passwordController.text,
+        );
+
+    if (!mounted) return;
+
+    if (success) {
+      // لاحقاً سيتم تحويل المستخدم
+      // بواسطة GoRouter
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
 
@@ -158,31 +190,5 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _login() async {
-    if (!formKey.currentState!.validate()) {
-      return;
-    }
-
-    final success = await ref
-        .read(authControllerProvider.notifier)
-        .login(
-          email: emailController.text.trim(),
-
-          password: passwordController.text,
-        );
-
-    if (!mounted) return;
-
-    if (success) {
-      // لاحقاً سيتم تحويل المستخدم
-      // بواسطة GoRouter
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const DashboardScreen()),
-      );
-    }
   }
 }

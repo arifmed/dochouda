@@ -1,3 +1,4 @@
+import 'package:dochouda/features/auth/presentation/add_user_screen.dart';
 import 'package:dochouda/features/auth/presentation/login_screen.dart';
 import 'package:dochouda/features/dashboard/presentation/menu.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,11 @@ class DashboardScreen extends ConsumerWidget {
                 MenuItemButton(
                   leadingIcon: const Icon(Icons.person_add_alt_1),
                   child: const Text('Ajouter un utilisateur'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => AddUserScreen()),
+                    );
+                  },
                 ),
                 MenuItemButton(
                   leadingIcon: const Icon(Icons.people_alt_rounded),
