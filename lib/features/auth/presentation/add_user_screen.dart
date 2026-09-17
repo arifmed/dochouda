@@ -26,6 +26,8 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
     super.dispose();
   }
 
+  bool obscurePassword = true;
+
   Future<void> _createUser() async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -64,7 +66,11 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
               children: [
                 TextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Nom'),
+                  decoration: InputDecoration(
+                    labelText: 'Nom',
+                    prefixIcon: Icon(Icons.person),
+                    border: OutlineInputBorder(),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez saisir un nom';
@@ -72,9 +78,14 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: Icon(Icons.email),
+                    border: OutlineInputBorder(),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez saisir un email';
@@ -82,9 +93,15 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Mot de passe'),
+                  decoration: InputDecoration(
+                    labelText: 'Mot de passe',
+                    prefixIcon: const Icon(Icons.lock),
+
+                    border: OutlineInputBorder(),
+                  ),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -93,9 +110,14 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: _roleController,
-                  decoration: InputDecoration(labelText: 'Role'),
+                  decoration: InputDecoration(
+                    labelText: 'Role',
+                    prefixIcon: Icon(Icons.room_preferences),
+                    border: OutlineInputBorder(),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez saisir un role';
@@ -104,9 +126,24 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                   },
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _createUser,
-                  child: Text('Créer un utilisateur'),
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: _createUser,
+                    child: const Text(
+                      'Créer un utilisateur',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

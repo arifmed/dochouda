@@ -7,14 +7,14 @@ class AddUser {
   static const String baseUrl = ApiConstants.baseUrl;
 
   // CREATE
-  static Future<UserModel> createUser(UserModel user) async {
+  static Future<UserModel> createUser(UserModel users) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/user'),
+      Uri.parse('$baseUrl/users'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: jsonEncode(user.toJson()),
+      body: jsonEncode(users.toJson()),
     );
     print(response.body);
     if (response.statusCode == 201) {
@@ -24,7 +24,7 @@ class AddUser {
   }
 
   static Future<void> deleteUser(String id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/user/$id'));
+    final response = await http.delete(Uri.parse('$baseUrl/users/$id'));
     if (response.statusCode != 204) {
       throw Exception('Échec de la suppression de l\'utilisateur');
     }
@@ -41,7 +41,7 @@ class AddUser {
 
   // READ BY ID
   static Future<UserModel> getUserById(String id) async {
-    final response = await http.get(Uri.parse('$baseUrl/user/$id'));
+    final response = await http.get(Uri.parse('$baseUrl/users/$id'));
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));
     }
@@ -49,14 +49,14 @@ class AddUser {
   }
 
   // UPDATE
-  static Future<UserModel> updateUser(String id, UserModel user) async {
+  static Future<UserModel> updateUser(String id, UserModel users) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/user/$id'),
+      Uri.parse('$baseUrl/users/$id'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: jsonEncode(user.toJson()),
+      body: jsonEncode(users.toJson()),
     );
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));
@@ -67,7 +67,7 @@ class AddUser {
   // CHANGER LE MOT DE PASSE
   static Future<void> changePassword(String userId, String newPassword) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/user/$userId/password'),
+      Uri.parse('$baseUrl/users/$userId/password'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -82,7 +82,7 @@ class AddUser {
 
   // RÉCUPÉRER PAR EMAIL
   static Future<UserModel> getUserByEmail(String email) async {
-    final response = await http.get(Uri.parse('$baseUrl/user/email/$email'));
+    final response = await http.get(Uri.parse('$baseUrl/users/email/$email'));
 
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));

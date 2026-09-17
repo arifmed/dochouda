@@ -1,4 +1,5 @@
 import 'package:dochouda/features/auth/presentation/add_user_screen.dart';
+import 'package:dochouda/features/auth/presentation/all_user_screen.dart';
 import 'package:dochouda/features/auth/presentation/login_screen.dart';
 import 'package:dochouda/features/dashboard/presentation/menu.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,11 @@ class DashboardScreen extends ConsumerWidget {
                 MenuItemButton(
                   leadingIcon: const Icon(Icons.people_alt_rounded),
                   child: const Text('Utilisateurs'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => AllUserScreen()),
+                    );
+                  },
                 ),
 
                 MenuItemButton(
