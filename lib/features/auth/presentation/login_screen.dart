@@ -166,6 +166,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
+
                       onPressed: authState.isLoading ? null : _login,
 
                       child: authState.isLoading
