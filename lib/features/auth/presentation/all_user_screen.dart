@@ -1,4 +1,5 @@
 import 'package:dochouda/features/auth/presentation/add_user_screen.dart';
+import 'package:dochouda/features/auth/presentation/profile_user.dart';
 import 'package:flutter/material.dart';
 import 'package:dochouda/features/auth/data/add_user.dart';
 
@@ -172,7 +173,15 @@ class _AllUserState extends State<AllUserScreen> {
                                 ),
                                 SizedBox(height: 8),
                                 FilledButton.icon(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProfileUser(user: user),
+                                      ),
+                                    );
+                                  },
                                   icon: const Icon(Icons.read_more_rounded),
                                   label: const Text('Details'),
                                   style: FilledButton.styleFrom(
