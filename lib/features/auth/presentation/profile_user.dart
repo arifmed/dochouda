@@ -1,5 +1,6 @@
 import 'package:dochouda/features/auth/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ProfileUser extends StatefulWidget {
   const ProfileUser({super.key, required this.user});
@@ -12,7 +13,7 @@ class _ProfileUserState extends State<ProfileUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: const Text('Profile')),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -25,7 +26,7 @@ class _ProfileUserState extends State<ProfileUser> {
                 children: [
                   // Banner Image Container
                   Container(
-                    height: 180,
+                    height: 50,
                     width: double.infinity,
                     margin: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -34,9 +35,7 @@ class _ProfileUserState extends State<ProfileUser> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),
                       image: const DecorationImage(
-                        image: NetworkImage(
-                          'https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=1000',
-                        ),
+                        image: NetworkImage(''),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -44,7 +43,7 @@ class _ProfileUserState extends State<ProfileUser> {
 
                   // Follow Button
                   Positioned(
-                    top: 24,
+                    top: 5,
                     right: 32,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -57,17 +56,12 @@ class _ProfileUserState extends State<ProfileUser> {
                         children: [
                           FilledButton.icon(
                             onPressed: () {},
-                            icon: const Icon(
-                              Icons.edit,
-                              size: 20,
-                              color: Colors.black,
-                            ),
+                            icon: const Icon(Icons.edit, size: 20),
                             label: const Text(
                               'Modifier',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -82,13 +76,10 @@ class _ProfileUserState extends State<ProfileUser> {
                     bottom: -50,
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
                       child: const CircleAvatar(
                         radius: 54,
-                        backgroundColor: Color(0xFFE2E8F0),
+
                         backgroundImage: NetworkImage(
                           'https://i.pravatar.cc/300?img=12', // Placeholder avatar
                         ),
@@ -100,60 +91,6 @@ class _ProfileUserState extends State<ProfileUser> {
 
               const SizedBox(height: 12),
 
-              // Status Bar / Experience Indicator Section
-              Padding(
-                padding: const EdgeInsets.only(left: 150, right: 24),
-                child: Row(
-                  children: [
-                    const Text(
-                      'exp.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: SizedBox(
-                        height: 18,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 22,
-                          itemBuilder: (context, index) {
-                            // Colors corresponding to the gradient indicator in the design
-                            Color color = Colors.grey.shade300;
-                            if (index < 3) {
-                              color = const Color(0xFF6B5B95);
-                            } else if (index < 6) {
-                              color = const Color(0xFFE94B3C);
-                            } else if (index < 10) {
-                              color = const Color(0xFFF3A683);
-                            } else if (index < 14) {
-                              color = const Color(0xFF574B90);
-                            } else if (index < 16) {
-                              color = const Color(0xFF45B7D1);
-                            }
-
-                            return Container(
-                              width: 3,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 1.5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               const SizedBox(height: 40),
 
               // Name and Title Section
@@ -163,22 +100,30 @@ class _ProfileUserState extends State<ProfileUser> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.user.name!,
+                      widget.user.name,
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+
                         letterSpacing: -0.5,
                       ),
                     ),
                     SizedBox(height: 12),
                     Text(
-                      'Product Designer who focuses on\nsimplicity & usability.',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black54,
-                        height: 1.4,
-                      ),
+                      'Role: ${widget.user.role}',
+                      style: TextStyle(fontSize: 18, height: 1.4),
+                    ),
+                    Text(
+                      'Email: ${widget.user.email}',
+                      style: TextStyle(fontSize: 18, height: 1.4),
+                    ),
+                    Text(
+                      'Date de création: ${DateFormat("dd/MM/yyyy HH:mm").format(DateTime.parse("${widget.user.created_at}").toLocal())}',
+                      style: TextStyle(fontSize: 18, height: 1.4),
+                    ),
+                    Text(
+                      'Date de mise à jour: ${DateFormat("dd/MM/yyyy HH:mm").format(DateTime.parse("${widget.user.updated_at}").toLocal())}',
+                      style: TextStyle(fontSize: 18, height: 1.4),
                     ),
                   ],
                 ),
@@ -216,11 +161,7 @@ class _ProfileUserState extends State<ProfileUser> {
         children: [
           Text(
             count,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
           Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey)),

@@ -2,6 +2,7 @@ import 'package:dochouda/features/auth/data/add_user.dart';
 import 'package:dochouda/features/auth/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddUserScreen extends ConsumerStatefulWidget {
   const AddUserScreen({super.key});
@@ -16,6 +17,7 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _roleController = TextEditingController();
+  final TextEditingController _avatarController = TextEditingController();
 
   @override
   void dispose() {
@@ -23,6 +25,7 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
     _passwordController.dispose();
     _nameController.dispose();
     _roleController.dispose();
+    _avatarController.dispose();
     super.dispose();
   }
 
@@ -37,6 +40,7 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
             email: _emailController.text,
             password: _passwordController.text,
             role: _roleController.text,
+            avatar: _avatarController.text,
           ),
         );
         ScaffoldMessenger.of(context).showSnackBar(
@@ -124,6 +128,40 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                     }
                     return null;
                   },
+                ),
+                const SizedBox(height: 20),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 2,
+                      ),
+                    ),
+                    onPressed: () async {
+                      final picker = ImagePicker();
+                      final file = await picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 50,
+                        maxWidth: 150,
+                        maxHeight: 150,
+                      );
+
+                      if (file != null) {
+                        setState(() {
+                          _avatarController.text = file.path;
+                        });
+                      }
+                    },
+                    icon: Icon(Icons.photo_camera),
+                    label: Text('Choisir une photo'),
+                  ),
                 ),
                 SizedBox(height: 20),
                 SizedBox(

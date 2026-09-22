@@ -16,7 +16,6 @@ class AddUser {
       },
       body: jsonEncode(users.toJson()),
     );
-    print(response.body);
     if (response.statusCode == 201) {
       return UserModel.fromJson(jsonDecode(response.body));
     }
