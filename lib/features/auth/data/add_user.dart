@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dochouda/core/constants/api_constants.dart';
 import 'package:dochouda/features/auth/models/user_model.dart';
 import 'package:http/http.dart' as http;
@@ -7,19 +9,52 @@ class AddUser {
   static const String baseUrl = ApiConstants.baseUrl;
 
   // CREATE
-  static Future<UserModel> createUser(UserModel users) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/users'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: jsonEncode(users.toJson()),
-    );
-    if (response.statusCode == 201) {
-      return UserModel.fromJson(jsonDecode(response.body));
+  static Future<void> createUser({
+    required String name,
+    required String email,
+    required String password,
+    required String role,
+    File? avatar,
+  }) async {
+    final uri = Uri.parse('$baseUrl/users');
+
+    final request = http.MultipartRequest('POST', uri);
+
+    // ============================================================
+    // TEXT FIELDS
+    // ============================================================
+
+    request.fields['name'] = name;
+    request.fields['email'] = email;
+    request.fields['password'] = password;
+    request.fields['role'] = role;
+
+    // ============================================================
+    // AVATAR
+    // ============================================================
+
+    if (avatar != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('avatar', avatar.path),
+      );
     }
-    throw Exception('Échec de la création de l\'utilisateur');
+
+    // ============================================================
+    // SEND REQUEST
+    // ============================================================
+
+    final streamedResponse = await request.send();
+
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 201) {
+      throw Exception('Erreur ${response.statusCode}: ${response.body}');
+    }
+
+    // Optional: decode Laravel response
+    final data = jsonDecode(response.body);
+
+    print('User created: $data');
   }
 
   static Future<void> deleteUser(String id) async {

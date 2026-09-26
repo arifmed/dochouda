@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:dochouda/features/auth/data/add_user.dart';
-import 'package:dochouda/features/auth/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,6 +21,30 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
   final TextEditingController _avatarController = TextEditingController();
 
   @override
+  bool obscurePassword = true;
+
+  final ImagePicker _picker = ImagePicker();
+
+  File? _avatar;
+  // ============================================================
+  // PICK IMAGE
+  // ============================================================
+
+  Future<void> _pickAvatar() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+      maxWidth: 1000,
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        _avatar = File(pickedFile.path);
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -29,19 +54,15 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
     super.dispose();
   }
 
-  bool obscurePassword = true;
-
   Future<void> _createUser() async {
     if (_formKey.currentState!.validate()) {
       try {
         await AddUser.createUser(
-          UserModel(
-            name: _nameController.text,
-            email: _emailController.text,
-            password: _passwordController.text,
-            role: _roleController.text,
-            avatar: _avatarController.text,
-          ),
+          name: _nameController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+          role: _roleController.text,
+          avatar: _avatar,
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Utilisateur créé avec succès')),
@@ -68,6 +89,25 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
             key: _formKey,
             child: Column(
               children: [
+                GestureDetector(
+                  onTap: _pickAvatar,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: _avatar != null
+                        ? FileImage(_avatar!)
+                        : null,
+                    child: _avatar == null
+                        ? Icon(
+                            Icons.camera_alt,
+                            size: 50,
+                            color: Colors.grey[600],
+                          )
+                        : null,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
@@ -131,38 +171,6 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      side: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 2,
-                      ),
-                    ),
-                    onPressed: () async {
-                      final picker = ImagePicker();
-                      final file = await picker.pickImage(
-                        source: ImageSource.gallery,
-                        imageQuality: 50,
-                        maxWidth: 150,
-                        maxHeight: 150,
-                      );
-
-                      if (file != null) {
-                        setState(() {
-                          _avatarController.text = file.path;
-                        });
-                      }
-                    },
-                    icon: Icon(Icons.photo_camera),
-                    label: Text('Choisir une photo'),
-                  ),
-                ),
                 SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,

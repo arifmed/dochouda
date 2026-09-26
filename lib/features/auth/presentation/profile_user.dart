@@ -77,12 +77,9 @@ class _ProfileUserState extends State<ProfileUser> {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: const BoxDecoration(shape: BoxShape.circle),
-                      child: const CircleAvatar(
+                      child: CircleAvatar(
                         radius: 54,
-
-                        backgroundImage: NetworkImage(
-                          'https://i.pravatar.cc/300?img=12', // Placeholder avatar
-                        ),
+                        backgroundImage: NetworkImage(widget.user.avatar ?? ""),
                       ),
                     ),
                   ),

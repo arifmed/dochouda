@@ -79,8 +79,12 @@ class _AllUserState extends State<AllUserScreen> {
                               child: AspectRatio(
                                 aspectRatio: 0.95,
                                 child: Image.network(
-                                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600',
+                                  user.avatar ?? '',
                                   fit: BoxFit.cover,
+
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.person, size: 50);
+                                  },
                                 ),
                               ),
                             ),
