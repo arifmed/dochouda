@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:dochouda/features/auth/data/add_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,28 +17,28 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _roleController = TextEditingController();
-  final TextEditingController _avatarController = TextEditingController();
 
-  @override
   bool obscurePassword = true;
-
   final ImagePicker _picker = ImagePicker();
 
-  File? _avatar;
+  XFile? _selectedXFile;
+  Uint8List? _avatarBytes;
+
   // ============================================================
   // PICK IMAGE
   // ============================================================
 
-  Future<void> _pickAvatar() async {
-    final XFile? pickedFile = await _picker.pickImage(
+  Future<void> pickAvatar() async {
+    final XFile? image = await _picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 80,
-      maxWidth: 1000,
     );
 
-    if (pickedFile != null) {
+    if (image != null) {
+      final bytes = await image.readAsBytes();
       setState(() {
-        _avatar = File(pickedFile.path);
+        _selectedXFile = image;
+        _avatarBytes = bytes;
       });
     }
   }
@@ -50,7 +49,6 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
     _passwordController.dispose();
     _nameController.dispose();
     _roleController.dispose();
-    _avatarController.dispose();
     super.dispose();
   }
 
@@ -62,13 +60,17 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
           email: _emailController.text,
           password: _passwordController.text,
           role: _roleController.text,
-          avatar: _avatar,
+          avatarBytes: _avatarBytes,
+          avatarName: _selectedXFile?.name,
         );
+
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Utilisateur créé avec succès')),
         );
         Navigator.of(context).pop();
       } catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Échec de la création de l\'utilisateur : $e'),
@@ -81,23 +83,23 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Ajouter un utilisateur")),
+      appBar: AppBar(title: const Text("Ajouter un utilisateur")),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: _pickAvatar,
+                  onTap: pickAvatar,
                   child: CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.grey[300],
-                    backgroundImage: _avatar != null
-                        ? FileImage(_avatar!)
+                    backgroundImage: _avatarBytes != null
+                        ? MemoryImage(_avatarBytes!)
                         : null,
-                    child: _avatar == null
+                    child: _avatarBytes == null
                         ? Icon(
                             Icons.camera_alt,
                             size: 50,
@@ -107,10 +109,9 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
                 TextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Nom',
                     prefixIcon: Icon(Icons.person),
                     border: OutlineInputBorder(),
@@ -125,7 +126,7 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                     prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
@@ -140,10 +141,9 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Mot de passe',
-                    prefixIcon: const Icon(Icons.lock),
-
+                    prefixIcon: Icon(Icons.lock),
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
@@ -157,7 +157,7 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _roleController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Role',
                     prefixIcon: Icon(Icons.room_preferences),
                     border: OutlineInputBorder(),
@@ -170,8 +170,6 @@ class _AddUserScreenState extends ConsumerState<AddUserScreen> {
                   },
                 ),
                 const SizedBox(height: 20),
-
-                SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   height: 54,

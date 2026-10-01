@@ -1,4 +1,5 @@
 import 'package:dochouda/features/auth/models/user_model.dart';
+import 'package:dochouda/features/auth/presentation/update_user_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -55,7 +56,20 @@ class _ProfileUserState extends State<ProfileUser> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           FilledButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => UpdateUserScreen(
+                                    userId: widget.user.id,
+                                    name: widget.user.name,
+                                    email: widget.user.email,
+                                    role: widget.user.role,
+                                    isActive: widget.user.is_active,
+                                    avatar: widget.user.avatar,
+                                  ),
+                                ),
+                              );
+                            },
                             icon: const Icon(Icons.edit, size: 20),
                             label: const Text(
                               'Modifier',
@@ -79,7 +93,7 @@ class _ProfileUserState extends State<ProfileUser> {
                       decoration: const BoxDecoration(shape: BoxShape.circle),
                       child: CircleAvatar(
                         radius: 54,
-                        backgroundImage: NetworkImage(widget.user.avatar ?? ""),
+                        backgroundImage: NetworkImage(widget.user.avatar!),
                       ),
                     ),
                   ),

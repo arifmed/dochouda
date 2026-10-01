@@ -1,7 +1,11 @@
-import 'dart:io';
+import 'dart:core';
+
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 
 import 'package:dochouda/core/constants/api_constants.dart';
 import 'package:dochouda/features/auth/models/user_model.dart';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -14,16 +18,15 @@ class AddUser {
     required String email,
     required String password,
     required String role,
-    File? avatar,
+    Uint8List? avatarBytes, // Pass raw bytes instead of File
+    String? avatarName, // Pass file name (e.g., 'avatar.png')
   }) async {
     final uri = Uri.parse('$baseUrl/users');
-
     final request = http.MultipartRequest('POST', uri);
 
     // ============================================================
     // TEXT FIELDS
     // ============================================================
-
     request.fields['name'] = name;
     request.fields['email'] = email;
     request.fields['password'] = password;
@@ -32,35 +35,49 @@ class AddUser {
     // ============================================================
     // AVATAR
     // ============================================================
-
-    if (avatar != null) {
+    if (avatarBytes != null) {
       request.files.add(
-        await http.MultipartFile.fromPath('avatar', avatar.path),
+        http.MultipartFile.fromBytes(
+          'avatar',
+          avatarBytes,
+          filename: avatarName ?? 'avatar.jpg',
+        ),
       );
     }
 
     // ============================================================
     // SEND REQUEST
     // ============================================================
-
     final streamedResponse = await request.send();
-
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode != 201) {
       throw Exception('Erreur ${response.statusCode}: ${response.body}');
     }
 
-    // Optional: decode Laravel response
     final data = jsonDecode(response.body);
-
     print('User created: $data');
+    if (role == 'admin') {
+      print('L\'utilisateur actuel est un Administrateur');
+    } else if (role == 'docteur') {
+      print('L\'utilisateur actuel est un Docteur');
+    } else {
+      print('L\'utilisateur actuel n\'est pas un Administrateur ou un Docteur');
+    }
   }
 
-  static Future<void> deleteUser(String id) async {
+  static Future<void> deleteUser(String id, String role) async {
     final response = await http.delete(Uri.parse('$baseUrl/users/$id'));
     if (response.statusCode != 204) {
       throw Exception('Échec de la suppression de l\'utilisateur');
+    }
+
+    if (role == 'admin') {
+      print('L\'utilisateur actuel est un Administrateur');
+    } else if (role == 'docteur') {
+      print('L\'utilisateur actuel est un Docteur');
+    } else {
+      print('L\'utilisateur actuel n\'est pas un Administrateur ou un Docteur');
     }
   }
 
@@ -70,6 +87,7 @@ class AddUser {
       final List<dynamic> jsonList = jsonDecode(response.body);
       return jsonList.map((json) => UserModel.fromJson(json)).toList();
     }
+
     throw Exception('Échec de la récupération des utilisateurs');
   }
 
@@ -82,35 +100,71 @@ class AddUser {
     throw Exception('Échec de la récupération de l\'utilisateur');
   }
 
-  // UPDATE
-  static Future<UserModel> updateUser(String id, UserModel users) async {
-    final response = await http.put(
+  static Future<void> updateUser({
+    required int id,
+    required String name,
+    required String email,
+    String? password,
+    required String role,
+    required bool isActive,
+    Uint8List? avatarBytes, // Pass bytes instead of File
+    String? avatarName, // File name (e.g., 'avatar.jpg')
+  }) async {
+    // Use POST with _method=PUT to ensure multipart data is parsed correctly on backend frameworks like Laravel
+    final request = http.MultipartRequest(
+      'POST',
       Uri.parse('$baseUrl/users/$id'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: jsonEncode(users.toJson()),
     );
-    if (response.statusCode == 200) {
-      return UserModel.fromJson(jsonDecode(response.body));
-    }
-    throw Exception('Échec de la mise à jour de l\'utilisateur');
-  }
 
-  // CHANGER LE MOT DE PASSE
-  static Future<void> changePassword(String userId, String newPassword) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/users/$userId/password'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: jsonEncode({'password': newPassword}),
-    );
+    // Method spoofing for frameworks that don't process multipart/form-data on PUT
+    request.fields['_method'] = 'PUT';
+
+    // ============================================================
+    // TEXT FIELDS
+    // ============================================================
+    request.fields['name'] = name;
+    request.fields['email'] = email;
+    request.fields['role'] = role;
+    request.fields['is_active'] = isActive
+        ? '1'
+        : '0'; // Send '1'/'0' or 'true'/'false' depending on backend requirement
+
+    // Only send password when specified
+    if (password != null && password.isNotEmpty) {
+      request.fields['password'] = password;
+    }
+
+    // ============================================================
+    // AVATAR
+    // ============================================================
+    if (avatarBytes != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'avatar',
+          avatarBytes,
+          filename: avatarName ?? 'avatar.jpg',
+        ),
+      );
+    }
+
+    // ============================================================
+    // SEND REQUEST
+    // ============================================================
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode != 200) {
-      throw Exception('Échec du changement de mot de passe');
+      throw Exception(
+        'Échec de la mise à jour de l\'utilisateur (${response.statusCode}): ${response.body}',
+      );
+    }
+
+    if (role == 'admin') {
+      print('L\'utilisateur actuel est un Administrateur');
+    } else if (role == 'docteur') {
+      print('L\'utilisateur actuel est un Docteur');
+    } else {
+      print('L\'utilisateur actuel n\'est pas un Administrateur ou un Docteur');
     }
   }
 

@@ -1,7 +1,9 @@
 import 'package:dochouda/features/auth/presentation/add_user_screen.dart';
 import 'package:dochouda/features/auth/presentation/all_user_screen.dart';
 import 'package:dochouda/features/auth/presentation/login_screen.dart';
+import 'package:dochouda/features/auth/presentation/update_user_screen.dart';
 import 'package:dochouda/features/dashboard/presentation/menu.dart';
+import 'package:dochouda/features/patients/presentation/add_patient_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m3e_floating_toolbar/floating_toolbar/m3e_floating_toolbar.dart';
@@ -25,26 +27,45 @@ class DashboardScreen extends ConsumerWidget {
                 MenuItemButton(
                   leadingIcon: const Icon(Icons.person),
                   child: const Text('Profile'),
-                  onPressed: () {},
-                ),
-                MenuItemButton(
-                  leadingIcon: const Icon(Icons.person_add_alt_1),
-                  child: const Text('Ajouter un utilisateur'),
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => AddUserScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => UpdateUserScreen(
+                          userId: auth.user!.id,
+                          name: auth.user!.name,
+                          email: auth.user!.email,
+                          role: auth.user!.role,
+                          isActive: auth.user!.is_active,
+                          avatar: auth.user!.avatar,
+                        ),
+                      ),
                     );
                   },
                 ),
-                MenuItemButton(
-                  leadingIcon: const Icon(Icons.people_alt_rounded),
-                  child: const Text('Utilisateurs'),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => AllUserScreen()),
-                    );
-                  },
-                ),
+                if (auth.user!.role == 'admin' || auth.user!.role == 'docteur')
+                  MenuItemButton(
+                    leadingIcon: const Icon(Icons.person_add_alt_1),
+                    child: const Text('Ajouter un utilisateur'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AddUserScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                if (auth.user!.role == 'admin' || auth.user!.role == 'docteur')
+                  MenuItemButton(
+                    leadingIcon: const Icon(Icons.people_alt_rounded),
+                    child: const Text('Utilisateurs'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AllUserScreen(),
+                        ),
+                      );
+                    },
+                  ),
 
                 MenuItemButton(
                   leadingIcon: const Icon(Icons.password),
@@ -219,7 +240,11 @@ class DashboardScreen extends ConsumerWidget {
             ),
             child: IconButton(
               icon: const Icon(Icons.add, color: Color(0xFF5E4A83), size: 28),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => AddPatientScreen()),
+                );
+              },
             ),
           ),
         ],
