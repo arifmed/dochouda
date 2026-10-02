@@ -100,8 +100,9 @@ class _AllUserState extends State<AllUserScreen> {
                                     fit: BoxFit.cover,
                                     loadingBuilder:
                                         (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
+                                          if (loadingProgress == null) {
                                             return child;
+                                          }
                                           return Center(
                                             child: CircularProgressIndicator(
                                               value:

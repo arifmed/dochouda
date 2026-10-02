@@ -1,6 +1,7 @@
 import 'package:dochouda/features/auth/presentation/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));
@@ -12,6 +13,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: const Locale('fr', ''), // تحديد اللغة العربية كافتراضية
+      supportedLocales: const [
+        Locale('fr', ''), // الفرنسية
+        Locale('ar', ''), // العربية
+        Locale('en', ''), // الإنجليزية
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       title: 'Docteur Houda',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

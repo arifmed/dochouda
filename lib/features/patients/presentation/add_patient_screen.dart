@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:dochouda/features/patients/data/patient_api.dart';
 import 'package:dochouda/features/patients/models/patient_model.dart';
+import 'package:flutter/material.dart';
 
 class AddPatientScreen extends StatefulWidget {
   const AddPatientScreen({super.key});
@@ -12,7 +13,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  final _fullNameController = TextEditingController();
+
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
@@ -22,46 +23,47 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   final _allergiesController = TextEditingController();
   final _chronicDiseasesController = TextEditingController();
   final _dateOfBirthController = TextEditingController();
-  String _gender = 'Male';
+  String _gender = 'Homme';
   bool _isLoading = false;
 
-  Future<void> _addPatient() async {
+  Future<void> _createPatient() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
       try {
-        final patient = PatientModel(
-          id: 0,
-          firstName: _firstNameController.text,
-          lastName: _lastNameController.text,
-          fullName: '${_firstNameController.text} ${_lastNameController.text}',
-          dateOfBirth: _dateOfBirthController.text,
-          gender: _gender,
-          phone: _phoneController.text,
-          email: _emailController.text,
-          address: _addressController.text,
-          bloodType: _bloodTypeController.text,
-          emergencyContactName: _emergencyContactNameController.text,
-          emergencyContactPhone: _emergencyContactPhoneController.text,
-          allergies: _allergiesController.text,
-          chronicDiseases: _chronicDiseasesController.text,
+        await PatientApi.createPatient(
+          PatientModel(
+            id: 0,
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
+            dateOfBirth: _dateOfBirthController.text,
+            gender: _gender,
+            phone: _phoneController.text,
+            email: _emailController.text,
+            address: _addressController.text,
+            bloodType: _bloodTypeController.text,
+            emergencyContactName: _emergencyContactNameController.text,
+            emergencyContactPhone: _emergencyContactPhoneController.text,
+            allergies: _allergiesController.text,
+            chronicDiseases: _chronicDiseasesController.text,
+          ),
         );
 
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Patient added successfully')),
+          const SnackBar(content: Text('Patient ajouté avec succès')),
         );
 
         Navigator.of(context).pop();
       } catch (e) {
         if (!mounted) return;
 
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to add patient: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Échec de l\'ajout du patient : $e')),
+        );
       } finally {
         if (mounted) {
           setState(() {
@@ -85,6 +87,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     _allergiesController.dispose();
     _chronicDiseasesController.dispose();
     _dateOfBirthController.dispose();
+
     super.dispose();
   }
 
@@ -105,7 +108,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Patient')),
+      appBar: AppBar(title: const Text('Ajouter un patient')),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Form(
@@ -120,12 +123,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                         child: TextFormField(
                           controller: _firstNameController,
                           decoration: const InputDecoration(
-                            labelText: 'First Name',
+                            labelText: 'Prénom',
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a first name';
+                              return 'Veuillez entrer un prénom';
                             }
                             return null;
                           },
@@ -136,12 +139,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                         child: TextFormField(
                           controller: _lastNameController,
                           decoration: const InputDecoration(
-                            labelText: 'Last Name',
+                            labelText: 'Nom',
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a last name';
+                              return 'Veuillez entrer un nom';
                             }
                             return null;
                           },
@@ -151,32 +154,20 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   ),
                   const SizedBox(height: 10),
 
-                  // Full Name (auto-computed, but let user edit)
-                  TextFormField(
-                    controller: _fullNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Full Name',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.grey,
-                      enabled: false,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
                   // Date of Birth
                   TextFormField(
                     controller: _dateOfBirthController,
                     decoration: const InputDecoration(
-                      labelText: 'Date of Birth',
+                      labelText: 'Date de naissance',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.calendar_today),
                     ),
                     readOnly: true,
                     onTap: _selectDate,
+
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please select a date of birth';
+                        return 'Veuillez sélectionner une date de naissance.';
                       }
                       return null;
                     },
@@ -187,13 +178,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   DropdownButtonFormField<String>(
                     value: _gender,
                     decoration: const InputDecoration(
-                      labelText: 'Gender',
+                      labelText: 'Genre',
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'Male', child: Text('Male')),
-                      DropdownMenuItem(value: 'Female', child: Text('Female')),
-                      DropdownMenuItem(value: 'Other', child: Text('Other')),
+                      DropdownMenuItem(value: 'Homme', child: Text('Homme')),
+                      DropdownMenuItem(value: 'Femme', child: Text('Femme')),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -201,6 +191,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                       });
                     },
                   ),
+
                   const SizedBox(height: 10),
 
                   // Email
@@ -214,7 +205,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     validator: (value) {
                       if (value != null && value.isNotEmpty) {
                         if (!value.contains('@') || !value.contains('.')) {
-                          return 'Please enter a valid email';
+                          return 'Veuillez entrer un email valide';
                         }
                       }
                       return null;
@@ -227,12 +218,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
-                      labelText: 'Phone',
+                      labelText: 'Téléphone',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a phone number';
+                        return 'Veuillez entrer un numéro de téléphone';
                       }
                       return null;
                     },
@@ -243,7 +234,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   TextFormField(
                     controller: _addressController,
                     decoration: const InputDecoration(
-                      labelText: 'Address',
+                      labelText: 'Adresse',
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -253,15 +244,73 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   TextFormField(
                     controller: _bloodTypeController,
                     decoration: const InputDecoration(
-                      labelText: 'Blood Type (e.g., A+)',
+                      labelText: 'Groupage sanguin (ex: A+)',
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 10),
 
-                  ElevatedButton(
-                    onPressed: _addPatient,
-                    child: const Text('Add Patient'),
+                  // Emergency Contact Name
+                  TextFormField(
+                    controller: _emergencyContactNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nom du contact d\'urgence',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Emergency Contact Phone
+                  TextFormField(
+                    controller: _emergencyContactPhoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      labelText: 'Téléphone du contact d\'urgence',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Allergies
+                  TextFormField(
+                    controller: _allergiesController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: 'Allergies',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Chronic Diseases
+                  TextFormField(
+                    controller: _chronicDiseasesController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: 'Maladies chroniques',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: _createPatient,
+                      child: const Text(
+                        'Enregistrer le patient',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
