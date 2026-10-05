@@ -18,8 +18,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _bloodTypeController = TextEditingController();
-  final _emergencyContactNameController = TextEditingController();
-  final _emergencyContactPhoneController = TextEditingController();
+  final _emergencyContactName = TextEditingController();
+  final _emergencyContactPhone = TextEditingController();
   final _allergiesController = TextEditingController();
   final _chronicDiseasesController = TextEditingController();
   final _dateOfBirthController = TextEditingController();
@@ -44,8 +44,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             email: _emailController.text,
             address: _addressController.text,
             bloodType: _bloodTypeController.text,
-            emergencyContactName: _emergencyContactNameController.text,
-            emergencyContactPhone: _emergencyContactPhoneController.text,
+            emergencyContactName: _emergencyContactName.text,
+            emergencyContactPhone: _emergencyContactPhone.text,
             allergies: _allergiesController.text,
             chronicDiseases: _chronicDiseasesController.text,
           ),
@@ -82,8 +82,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     _phoneController.dispose();
     _addressController.dispose();
     _bloodTypeController.dispose();
-    _emergencyContactNameController.dispose();
-    _emergencyContactPhoneController.dispose();
+    _emergencyContactName.dispose();
+
+    _emergencyContactPhone.dispose();
     _allergiesController.dispose();
     _chronicDiseasesController.dispose();
     _dateOfBirthController.dispose();
@@ -175,23 +176,27 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   const SizedBox(height: 10),
 
                   // Gender
-                  DropdownButtonFormField<String>(
-                    value: _gender,
-                    decoration: const InputDecoration(
-                      labelText: 'Genre',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'Homme', child: Text('Homme')),
-                      DropdownMenuItem(value: 'Femme', child: Text('Femme')),
-                    ],
-                    onChanged: (value) {
+                  DropdownMenu(
+                    enableSearch: true,
+                    enableFilter: true,
+                    requestFocusOnTap: true,
+                    leadingIcon: Icon(Icons.person),
+                    label: Text("Genre"),
+                    width: double.infinity,
+                    dropdownMenuEntries: <String>['Homme', 'Femme'].map((
+                      gender,
+                    ) {
+                      return DropdownMenuEntry<String>(
+                        value: gender,
+                        label: gender,
+                      );
+                    }).toList(),
+                    onSelected: (value) {
                       setState(() {
                         _gender = value!;
                       });
                     },
                   ),
-
                   const SizedBox(height: 10),
 
                   // Email
@@ -252,7 +257,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
 
                   // Emergency Contact Name
                   TextFormField(
-                    controller: _emergencyContactNameController,
+                    controller: _emergencyContactName,
                     decoration: const InputDecoration(
                       labelText: 'Nom du contact d\'urgence',
                       border: OutlineInputBorder(),
@@ -262,7 +267,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
 
                   // Emergency Contact Phone
                   TextFormField(
-                    controller: _emergencyContactPhoneController,
+                    controller: _emergencyContactPhone,
                     keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
                       labelText: 'Téléphone du contact d\'urgence',
@@ -312,6 +317,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
