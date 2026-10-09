@@ -2,6 +2,7 @@ import 'package:dochouda/features/patients/data/patient_api.dart';
 import 'package:dochouda/features/patients/models/patient_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class UpdatePatientScreen extends StatefulWidget {
   final PatientModel patient;
@@ -100,14 +101,17 @@ class _UpdatePatientScreenState extends State<UpdatePatientScreen> {
               ),
               const SizedBox(height: 10),
               TextFormField(
-                controller: _dateOfBirthController,
+                controller: TextEditingController(
+                  text: DateFormat("dd/MM/yyyy").format(
+                    DateTime.parse("${widget.patient.dateOfBirth}").toLocal(),
+                  ),
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Date de naissance',
                   border: OutlineInputBorder(),
                 ),
                 readOnly: true,
                 onTap: _selectDate,
-
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez sélectionner une date de naissance.';
@@ -222,6 +226,15 @@ class _UpdatePatientScreenState extends State<UpdatePatientScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: _allergiesController,
+                decoration: const InputDecoration(
+                  labelText: 'Allergies',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -256,6 +269,11 @@ class _UpdatePatientScreenState extends State<UpdatePatientScreen> {
 
                     // إغلاق الشاشة الحالية
                     if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Patient mis à jour avec succès'),
+                        ),
+                      );
                       Navigator.pop(context, true);
                     }
                   },

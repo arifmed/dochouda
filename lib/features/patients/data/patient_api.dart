@@ -133,10 +133,10 @@ class PatientApi {
   }
 
   // DELETE
-  static Future<PatientModel> deletePatient(PatientModel patient) async {
+  static Future<PatientModel> deletePatient(int id) async {
     final token = await SecureStorage.getToken();
     final response = await http.delete(
-      Uri.parse('$baseUrl/patients/${patient.id}'),
+      Uri.parse('$baseUrl/patients/$id'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

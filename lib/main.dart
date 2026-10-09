@@ -13,11 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      locale: const Locale('fr', ''), // تحديد اللغة العربية كافتراضية
+      locale: const Locale('fr', ''),
       supportedLocales: const [
-        Locale('fr', ''), // الفرنسية
-        Locale('ar', ''), // العربية
-        Locale('en', ''), // الإنجليزية
+        Locale('fr', ''),
+        Locale('ar', ''),
+        Locale('en', ''),
       ],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

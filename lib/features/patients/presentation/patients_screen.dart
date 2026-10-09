@@ -59,13 +59,15 @@ class _PatientsScreenState extends State<PatientsScreen> {
                           subtitle: Text(patient.phone?.toString() ?? ''),
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () {
-                            Navigator.push(
+                            final result = Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) =>
                                     PatientDetailsScreen(id: patient.id),
                               ),
                             );
+
+                            setState(() {});
                           },
                         ),
                       );

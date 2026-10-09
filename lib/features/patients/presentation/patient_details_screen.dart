@@ -1,5 +1,7 @@
 import 'package:dochouda/features/patients/data/patient_api.dart';
 import 'package:dochouda/features/patients/models/patient_model.dart';
+import 'package:dochouda/features/patients/presentation/patients_screen.dart';
+
 import 'package:dochouda/features/patients/presentation/update_patient_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,290 +15,242 @@ class PatientDetailsScreen extends StatefulWidget {
 }
 
 class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
-  Future<PatientModel?> showPatient() async {
-    return await PatientApi.showPatient(widget.id);
+  // 1. تعريف الـ Future هنا لمنع الاستدعاء المتكرر
+  late Future<PatientModel?> _patientFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPatientData();
+  }
+
+  // دالة لجلب البيانات يمكن إعادة استدعائها عند الحاجة للتحديث
+  void _fetchPatientData() {
+    // تم تصحيح id إلى widget.id هنا
+    _patientFuture = PatientApi.showPatient(widget.id);
+  }
+
+  // دالة مساعدة لتنسيق التاريخ بأمان
+  String _formatDate(dynamic dateString) {
+    if (dateString == null || dateString.toString().isEmpty) {
+      return 'Indisponible';
+    }
+    try {
+      return DateFormat(
+        "dd/MM/yyyy",
+      ).format(DateTime.parse(dateString.toString()).toLocal());
+    } catch (e) {
+      return 'Format invalide';
+    }
+  }
+
+  Future<void> _deletePatient() async {
+    try {
+      await PatientApi.deletePatient(widget.id);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Patient supprimé avec succès')),
+        );
+        // إضافة true كقيمة مرجعة لتحديث الشاشة السابقة
+        Navigator.pop(
+          context,
+          MaterialPageRoute(builder: (context) => PatientsScreen()),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(
+          context,
+          MaterialPageRoute(builder: (context) => PatientsScreen()),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Détails du patient')),
-      body: Column(
+      body: FutureBuilder<PatientModel?>(
+        future: _patientFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erreur: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text('Aucun patient trouvé'));
+          }
+
+          final patient = snapshot.data!;
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Card.outlined(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                        leading: const CircleAvatar(
+                          radius: 30,
+                          child: Icon(Icons.person, size: 40),
+                        ),
+                        title: Text(
+                          '${patient.firstName} ${patient.lastName}',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.phone,
+                                  size: 16,
+                                  color: Colors.grey[600],
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  patient.phone ?? 'Actuellement indisponible',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.email,
+                                  size: 16,
+                                  color: Colors.grey[600],
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    patient.email ??
+                                        'Actuellement indisponible',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: Colors.grey[700],
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            IconButton.filledTonal(
+                              icon: const Icon(Icons.print),
+                              onPressed: () {},
+                            ),
+                            const SizedBox(width: 10),
+                            IconButton.filledTonal(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        UpdatePatientScreen(patient: patient),
+                                  ),
+                                );
+                                if (result == true) {
+                                  setState(() {
+                                    _fetchPatientData();
+                                  });
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 10),
+                            IconButton.filledTonal(
+                              icon: const Icon(Icons.delete),
+                              onPressed: _deletePatient,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(indent: 30, endIndent: 30),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          children: [
+                            _buildInfoRow(
+                              Icons.calendar_today,
+                              'Date de naissance: ${_formatDate(patient.dateOfBirth)}',
+                            ),
+                            const SizedBox(height: 10),
+                            _buildInfoRow(
+                              Icons.person,
+                              'Sexe: ${patient.gender ?? 'N/A'}',
+                            ),
+                            const SizedBox(height: 10),
+                            _buildInfoRow(
+                              Icons.location_on,
+                              'Adresse: ${patient.address ?? 'N/A'}',
+                            ),
+                            const SizedBox(height: 10),
+                            _buildInfoRow(
+                              Icons.bloodtype,
+                              'Groupe sanguin: ${patient.bloodType ?? 'N/A'}',
+                            ),
+                            const SizedBox(height: 10),
+                            _buildInfoRow(
+                              Icons.contact_emergency,
+                              'Nom du contact d\'urgence: ${patient.emergencyContactName ?? 'N/A'}',
+                            ),
+                            const SizedBox(height: 10),
+                            _buildInfoRow(
+                              Icons.contact_emergency_rounded,
+                              'Numéro du contact d\'urgence: ${patient.emergencyContactPhone ?? 'N/A'}',
+                            ),
+                            const SizedBox(height: 10),
+                            _buildInfoRow(
+                              Icons.medical_services,
+                              'Allergies: ${patient.allergies ?? 'N/A'}',
+                            ),
+                            const SizedBox(height: 10),
+                            _buildInfoRow(
+                              Icons.medical_services,
+                              'Maladies chroniques: ${patient.chronicDiseases ?? 'N/A'}',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FutureBuilder(
-            future: showPatient(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final patient = snapshot.data!;
-                return Column(
-                  children: [
-                    Card.outlined(
-                      child: Column(
-                        mainAxisSize: .min,
-                        children: <Widget>[
-                          ListTile(
-                            leading: CircleAvatar(
-                              radius: 30,
-                              child: Icon(Icons.person, size: 40),
-                            ),
-                            title: Text(
-                              '${patient.firstName} ${patient.lastName}',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.phone,
-                                      size: 16,
-                                      color: Colors.grey[600],
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      patient.phone ??
-                                          'Actuellement indisponible',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.email,
-                                      size: 16,
-                                      color: Colors.grey[600],
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      patient.email ??
-                                          'Actuellement indisponible',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: .min,
-                              children: <Widget>[
-                                IconButton.filledTonal(
-                                  icon: Icon(Icons.print),
-                                  onPressed: () {},
-                                ),
-                                const SizedBox(width: 10),
-                                IconButton.filledTonal(
-                                  icon: Icon(Icons.edit),
-                                  onPressed: () async {
-                                    final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => UpdatePatientScreen(
-                                          patient: patient,
-                                        ),
-                                      ),
-                                    );
-                                    if (result == true) {
-                                      // قم باستدعاء الدالة المسؤولة عن جلب البيانات من واجهة برمجة التطبيقات (API)
-                                      // أو استخدم setState لإعادة بناء الواجهة
-                                      setState(() {
-                                        // مثال: fetchPatients(); أو تحديث بيانات المريض الحالي
-                                      });
-                                    }
-                                  },
-                                ),
-                                const SizedBox(width: 10),
-                                IconButton.filledTonal(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {},
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(indent: 30, endIndent: 30),
-
-                          Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.calendar_today),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Date de naissance: ${DateFormat("dd/MM/yyyy").format(DateTime.parse("${patient.dateOfBirth}").toLocal())}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.person),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Sexe: ${patient.gender}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.location_on),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Adresse: ${patient.address}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.bloodtype),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Groupe sanguin: ${patient.bloodType}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.contact_emergency),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Nom du contact d\'urgence: ${patient.emergencyContactName}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.contact_emergency_rounded),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Numéro du contact d\'urgence: ${patient.emergencyContactPhone}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.medical_services),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Allergies: ${patient.allergies}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.medical_services),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Maladies chroniques: ${patient.chronicDiseases}',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Card.outlined(
-                      margin: EdgeInsets.all(16),
-
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            child: Icon(Icons.person, size: 50),
-                          ),
-                          const SizedBox(height: 10),
-                          Text('Nom: ${patient.firstName}'),
-                          const SizedBox(height: 10),
-                          Text('Prenom: ${patient.lastName}'),
-                          const SizedBox(height: 10),
-                          Text('Phone: ${patient.phone}'),
-                          const SizedBox(height: 10),
-                          Text('Email: ${patient.email}'),
-                          const SizedBox(height: 10),
-                          Text('Date de naissance: ${patient.dateOfBirth}'),
-                          const SizedBox(height: 10),
-                          Text('Sexe: ${patient.gender}'),
-                          Text('Adresse: ${patient.address}'),
-                          Text('Blood type: ${patient.bloodType}'),
-                          Text(
-                            'Emergency contact name: ${patient.emergencyContactName}',
-                          ),
-                          Text(
-                            'Emergency contact phone: ${patient.emergencyContactPhone}',
-                          ),
-                          Text('Allergies: ${patient.allergies}'),
-                          Text('Chronic diseases: ${patient.chronicDiseases}'),
-
-                          Text('id: ${patient.id}'),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Erreur: ${snapshot.error}'));
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
+          Icon(icon, size: 20, color: Colors.blueGrey),
+          const SizedBox(width: 8),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 15))),
         ],
       ),
     );
