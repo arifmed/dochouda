@@ -1,3 +1,4 @@
+import 'package:dochouda/features/consultations/presentation/add_consultation_screen.dart';
 import 'package:dochouda/features/patients/data/patient_api.dart';
 import 'package:dochouda/features/patients/models/patient_model.dart';
 import 'package:dochouda/features/patients/presentation/patients_screen.dart';
@@ -232,6 +233,30 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                         ),
                       ),
                     ],
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              AddConsultationScreen(patient: patient),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Ajouter une consultation',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ],
