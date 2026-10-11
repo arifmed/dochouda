@@ -248,6 +248,7 @@ class _UpdatePatientScreenState extends State<UpdatePatientScreen> {
                   onPressed: () async {
                     final patient = PatientModel(
                       id: widget.patient.id,
+
                       firstName: _firstNameController.text,
                       lastName: _lastNameController.text,
                       dateOfBirth: _dateOfBirthController.text,

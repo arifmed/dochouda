@@ -3,20 +3,40 @@ import 'dart:convert';
 import 'package:dochouda/core/constants/api_constants.dart';
 import 'package:dochouda/core/storage/secure_storage.dart';
 import 'package:dochouda/features/consultations/models/consultation_model.dart';
+import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
 
 class ConsultationApi {
-  Future<void> createConsultation(ConsultationModel consultation) async {
+  static const String baseUrl = ApiConstants.baseUrl;
+
+  static Future<void> createConsultation(ConsultationModel consultation) async {
     final token = await SecureStorage.getToken();
     try {
       final response = await http.post(
-        Uri.parse(ApiConstants.consulations),
+        Uri.parse('$baseUrl/consultations'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: json.encode(consultation.toJson()),
+        body: jsonEncode({
+          'patient_id': consultation.patientId.toString(),
+          'date': consultation.date,
+          'notes': consultation.notes,
+          'type_consultation': consultation.type_consultation,
+          'symptoms': consultation.symptoms,
+          'diagnosis': consultation.diagnosis,
+          'temperature': consultation.temperature.toString(),
+          'heart_rate': consultation.heartRate.toString(),
+          'weight': consultation.weight.toString(),
+          'height': consultation.height.toString(),
+          'blood_pressure': consultation.bloodPressure,
+          'repos': consultation.repos.toString(),
+        }),
       );
+      debugPrint('Consultation: ${response.body}');
+
       if (response.statusCode == 201) {
         return;
       } else {
@@ -29,37 +49,34 @@ class ConsultationApi {
 
   Future<List<ConsultationModel>> getAllConsultations() async {
     final token = await SecureStorage.getToken();
-    try {
-      final response = await http.get(
-        Uri.parse(ApiConstants.consulations),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonList = json.decode(response.body)['data'];
-        return jsonList
-            .map((json) => ConsultationModel.fromJson(json))
-            .toList();
-      } else {
-        throw Exception('Failed to load consultations');
-      }
-    } catch (e) {
-      throw Exception(e.toString());
+    final response = await http.get(
+      Uri.parse('$baseUrl/consultations'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    debugPrint('Consultation: ${response.body}');
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => ConsultationModel.fromJson(json)).toList();
     }
+
+    throw Exception('Erreur ${response.statusCode}: ${response.body}');
   }
 
   Future<ConsultationModel> showConsultation(int id) async {
     final token = await SecureStorage.getToken();
     try {
       final response = await http.get(
-        Uri.parse('${ApiConstants.consulations}/$id'),
+        Uri.parse('$baseUrl/consultations/$id'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
+      debugPrint('Consultation: ${response.body}');
       if (response.statusCode == 200) {
         return ConsultationModel.fromJson(json.decode(response.body));
       } else {

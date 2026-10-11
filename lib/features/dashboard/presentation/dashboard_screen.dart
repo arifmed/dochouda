@@ -2,6 +2,7 @@ import 'package:dochouda/features/auth/presentation/add_user_screen.dart';
 import 'package:dochouda/features/auth/presentation/all_user_screen.dart';
 import 'package:dochouda/features/auth/presentation/login_screen.dart';
 import 'package:dochouda/features/auth/presentation/update_user_screen.dart';
+import 'package:dochouda/features/consultations/presentation/consultation_screen.dart';
 import 'package:dochouda/features/dashboard/presentation/menu.dart';
 import 'package:dochouda/features/patients/presentation/add_patient_screen.dart';
 import 'package:dochouda/features/patients/presentation/patients_screen.dart';
@@ -202,7 +203,14 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ConsultationScreen(),
+                      ),
+                    );
+                  },
                   icon: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

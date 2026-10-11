@@ -1,4 +1,6 @@
+import 'package:dochouda/features/dashboard/presentation/menu.dart';
 import 'package:dochouda/features/patients/data/patient_api.dart';
+import 'package:dochouda/features/patients/presentation/add_patient_screen.dart';
 import 'package:dochouda/features/patients/presentation/patient_details_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +16,35 @@ class _PatientsScreenState extends State<PatientsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Patients')),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // 1. The Main Floating Toolbar
+          Menu(),
+
+          const SizedBox(width: 12),
+
+          // 2. The Isolated "+" Action Button
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE6D6FF),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.add, color: Color(0xFF5E4A83), size: 28),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => AddPatientScreen()),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
       body: FutureBuilder(
         future: PatientApi.getAllPatients(),
         builder: (context, snapshot) {
@@ -74,6 +105,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
                     },
                   ),
                 ),
+                SizedBox(height: 140),
               ],
             );
           }

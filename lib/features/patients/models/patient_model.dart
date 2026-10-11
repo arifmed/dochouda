@@ -1,5 +1,6 @@
 class PatientModel {
   final int id;
+
   final String? firstName;
   final String? lastName;
 
@@ -16,6 +17,7 @@ class PatientModel {
 
   PatientModel({
     required this.id,
+
     required this.firstName,
     required this.lastName,
     required this.dateOfBirth,
@@ -33,6 +35,7 @@ class PatientModel {
   factory PatientModel.fromJson(Map<String, dynamic> json) {
     return PatientModel(
       id: json['id'],
+
       firstName: json['first_name'],
       lastName: json['last_name'],
       dateOfBirth: json['date_of_birth'],
