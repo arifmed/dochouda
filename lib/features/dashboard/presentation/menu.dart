@@ -50,9 +50,10 @@ class _MenuState extends State<Menu> {
 
           IconButton(
             onPressed: () {
-              Navigator.of(
+              Navigator.pushReplacement(
                 context,
-              ).push(MaterialPageRoute(builder: (context) => RDV()));
+                MaterialPageRoute(builder: (context) => const RDV()),
+              );
             },
             icon: Column(
               mainAxisSize: MainAxisSize.min,
@@ -75,7 +76,7 @@ class _MenuState extends State<Menu> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.medical_services_rounded),
-                Text('Consultations', style: TextStyle(fontSize: 12)),
+                Text('Consultation', style: TextStyle(fontSize: 12)),
               ],
             ),
           ),

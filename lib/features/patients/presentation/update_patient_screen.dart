@@ -1,5 +1,6 @@
 import 'package:dochouda/features/patients/data/patient_api.dart';
 import 'package:dochouda/features/patients/models/patient_model.dart';
+import 'package:dochouda/features/patients/presentation/patients_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -275,7 +276,12 @@ class _UpdatePatientScreenState extends State<UpdatePatientScreen> {
                           content: Text('Patient mis à jour avec succès'),
                         ),
                       );
-                      Navigator.pop(context, true);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PatientsScreen(),
+                        ),
+                      );
                     }
                   },
                   child: const Text(

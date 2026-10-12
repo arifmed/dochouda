@@ -2,14 +2,12 @@ import 'package:dochouda/features/auth/presentation/add_user_screen.dart';
 import 'package:dochouda/features/auth/presentation/all_user_screen.dart';
 import 'package:dochouda/features/auth/presentation/login_screen.dart';
 import 'package:dochouda/features/auth/presentation/update_user_screen.dart';
-import 'package:dochouda/features/consultations/presentation/consultation_screen.dart';
+
 import 'package:dochouda/features/dashboard/presentation/menu.dart';
 import 'package:dochouda/features/patients/presentation/add_patient_screen.dart';
-import 'package:dochouda/features/patients/presentation/patients_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m3e_floating_toolbar/floating_toolbar/m3e_floating_toolbar.dart';
-import 'package:m3e_floating_toolbar/floating_toolbar/style/m3e_floating_toolbar_decoration.dart';
 
 import '../../auth/providers/auth_provider.dart';
 
@@ -165,83 +163,7 @@ class DashboardScreen extends ConsumerWidget {
 
         children: [
           // 1. The Main Floating Toolbar
-          M3EHorizontalFloatingToolbar(
-            expanded: true,
-            decoration: M3EFloatingToolbarDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 8),
-            ),
-            // leadingContent: IconButton(
-            //   icon: const Icon(Icons.attachment_rounded),
-            //   onPressed: () {},
-            // ),
-            content: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.bar_chart_rounded),
-                      Text('Dashboard', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
-
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (context) => Menu()));
-                  },
-                  icon: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.calendar_today_rounded),
-                      Text('RDV', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ConsultationScreen(),
-                      ),
-                    );
-                  },
-                  icon: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.medical_services_rounded),
-                      Text('Consultations', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const PatientsScreen(),
-                      ),
-                    );
-                  },
-                  icon: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.people_rounded),
-                      Text('Patients', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            //trailingContent: IconButton(
-            //  icon: const Icon(Icons.send_rounded),
-            //  onPressed: () {},
-            //),
-          ),
+          Menu(),
 
           const SizedBox(width: 12),
 

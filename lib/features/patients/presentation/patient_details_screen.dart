@@ -1,6 +1,8 @@
 import 'package:dochouda/features/consultations/presentation/add_consultation_screen.dart';
+import 'package:dochouda/features/dashboard/presentation/menu.dart';
 import 'package:dochouda/features/patients/data/patient_api.dart';
 import 'package:dochouda/features/patients/models/patient_model.dart';
+import 'package:dochouda/features/patients/presentation/add_patient_screen.dart';
 import 'package:dochouda/features/patients/presentation/patients_screen.dart';
 
 import 'package:dochouda/features/patients/presentation/update_patient_screen.dart';
@@ -53,16 +55,16 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
           const SnackBar(content: Text('Patient supprimé avec succès')),
         );
         // إضافة true كقيمة مرجعة لتحديث الشاشة السابقة
-        Navigator.pop(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PatientsScreen()),
+          MaterialPageRoute(builder: (context) => const PatientsScreen()),
         );
       }
     } catch (e) {
       if (context.mounted) {
-        Navigator.pop(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PatientsScreen()),
+          MaterialPageRoute(builder: (context) => const PatientsScreen()),
         );
       }
     }
@@ -72,6 +74,35 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Détails du patient')),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // 1. The Main Floating Toolbar
+          Menu(),
+
+          const SizedBox(width: 12),
+
+          // 2. The Isolated "+" Action Button
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE6D6FF),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.add, color: Color(0xFF5E4A83), size: 28),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => AddPatientScreen()),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
       body: FutureBuilder<PatientModel?>(
         future: _patientFuture,
         builder: (context, snapshot) {
@@ -245,7 +276,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
@@ -259,6 +290,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                     ),
                   ),
                 ),
+
+                SizedBox(height: 140),
               ],
             ),
           );

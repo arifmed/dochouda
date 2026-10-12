@@ -130,4 +130,29 @@ class ConsultationApi {
       throw Exception(e.toString());
     }
   }
+
+  static Future<List<ConsultationModel>> filterConsultationsByDate(
+    DateTime date,
+  ) async {
+    final token = await SecureStorage.getToken();
+    final response = await http.get(
+      Uri.parse("$baseUrl/consultations"),
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+      List<ConsultationModel> consultations = body
+          .map((item) => ConsultationModel.fromJson(item))
+          .toList();
+
+      return consultations.where((consultation) {
+        return DateUtils.isSameDay(
+          DateTime.parse(consultation.date.toString()),
+          date,
+        );
+      }).toList();
+    }
+    throw Exception('Échec du chargement des consultations');
+  }
 }

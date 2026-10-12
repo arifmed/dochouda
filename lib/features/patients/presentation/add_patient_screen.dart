@@ -1,5 +1,6 @@
 import 'package:dochouda/features/patients/data/patient_api.dart';
 import 'package:dochouda/features/patients/models/patient_model.dart';
+import 'package:dochouda/features/patients/presentation/patients_screen.dart';
 import 'package:flutter/material.dart';
 
 class AddPatientScreen extends StatefulWidget {
@@ -69,6 +70,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           setState(() {
             _isLoading = false;
           });
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const PatientsScreen()),
+          );
         }
       }
     }
